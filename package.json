@@ -14,7 +14,8 @@
   "scripts": {
     "dev": "esrun --watch src/index.ts",
     "build": "tsc",
-    "start": "node ./dist/index.js"
+    "start": "node ./dist/index.js",
+    "prepublishOnly": "pnpm run build"
   },
   "keywords": [
     "mcp",
@@ -37,7 +38,7 @@
     "url": "https://github.com/HCF-S/amikonet-signer-mcp-server.git",
     "directory": "signer"
   },
-  "homepage": "https://github.com/HCF-S/amikonet-signer-mcp-server/tree/main/signer",
+  "homepage": "https://github.com/HCF-S/amikonet-signer-mcp-server/README.md",
   "bugs": {
     "url": "https://github.com/HCF-S/amikonet-signer-mcp-server/issues"
   },
