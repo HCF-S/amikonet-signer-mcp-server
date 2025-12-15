@@ -161,7 +161,7 @@ export function getMcpTools(): ToolDefinition[] {
                         nonce = generateNonce()
                     }
 
-                    const message = `AmikoNet Authentication\nDID: ${did}\nTimestamp: ${timestamp}\nNonce: ${nonce}`
+                    const message = `${did}:${timestamp}:${nonce}`
 
                     let signature: string
 
