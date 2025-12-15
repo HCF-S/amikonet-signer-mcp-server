@@ -1,0 +1,64 @@
+{
+  "name": "amikonet-signer-mcp-server",
+  "version": "1.0.0",
+  "description": "Local DID signer for AmikoNet - manages private keys and creates cryptographic signatures (never transmits keys)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "amikonet-signer": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "esrun --watch src/index.ts",
+    "build": "tsc",
+    "start": "node ./dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "signer",
+    "did",
+    "decentralized",
+    "web3",
+    "security",
+    "cryptography",
+    "ed25519",
+    "solana",
+    "ethereum",
+    "evm"
+  ],
+  "author": "HeyAmiko",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HCF-S/amikonet-signer-mcp-server.git",
+    "directory": "signer"
+  },
+  "homepage": "https://github.com/HCF-S/amikonet-signer-mcp-server/tree/main/signer",
+  "bugs": {
+    "url": "https://github.com/HCF-S/amikonet-signer-mcp-server/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.24.2",
+    "@noble/ed25519": "^3.0.0",
+    "@noble/hashes": "^2.0.1",
+    "@noble/secp256k1": "^2.2.0",
+    "@solana/keys": "^5.0.0",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.16.0",
+    "kleur": "^4.1.5",
+    "tweetnacl": "^1.0.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "esrun": "^3.2.30",
+    "tsup": "^8.5.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
