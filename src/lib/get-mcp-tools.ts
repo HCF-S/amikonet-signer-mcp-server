@@ -44,24 +44,24 @@ export function getMcpTools(): ToolDefinition[] {
             callback: async (args: {
                 message: string
                 did?: string
-                privateKey?: string
                 provider?: DidProvider
             }) => {
                 try {
 
-                    const { message, did: providedDid, privateKey: providedKey, provider: providedProvider } = args
+                    const { message, did: providedDid, provider: providedProvider } = args
 
-                    let did = providedDid
-                    let privateKey = providedKey
                     let provider = providedProvider
+                    let did = providedDid
+
+                    const envCreds = getCredentialsFromEnv(provider)
+
+                    let privateKey = envCreds?.privateKey
 
                     if (!did || !privateKey) {
-                        const envCreds = getCredentialsFromEnv(provider)
                         if (!envCreds) {
                             throw new Error('No DID or private key provided, and none found in environment variables')
                         }
                         did = did || envCreds.did
-                        privateKey = privateKey || envCreds.privateKey
                         provider = provider || envCreds.provider
                     }
 
@@ -127,14 +127,17 @@ export function getMcpTools(): ToolDefinition[] {
                         .describe('DID provider (optional, auto-detected)'),
                 },
             },
-            callback: async (args: { did?: string; privateKey?: string; provider?: DidProvider }) => {
+            callback: async (args: { did?: string; provider?: DidProvider }) => {
                 try {
 
-                    const { did: providedDid, privateKey: providedKey, provider: providedProvider } = args
+                    const { did: providedDid, provider: providedProvider } = args
 
-                    let did = providedDid
-                    let privateKey = providedKey
                     let provider = providedProvider
+                    let did = providedDid
+
+                    const envCreds = getCredentialsFromEnv(provider)
+
+                    let privateKey = envCreds?.privateKey
 
                     if (!did || !privateKey) {
                         const envCreds = getCredentialsFromEnv(provider)
@@ -142,7 +145,6 @@ export function getMcpTools(): ToolDefinition[] {
                             throw new Error('No DID or private key provided, and none found in environment variables')
                         }
                         did = did || envCreds.did
-                        privateKey = privateKey || envCreds.privateKey
                         provider = provider || envCreds.provider
                     }
 
