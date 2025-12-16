@@ -330,6 +330,6 @@ MIT License - see LICENSE file for details
 
 ---
 
-**Built with ❤️ by HeyAmiko**
+**Built with ❤️ by [Amiko](https://heyamiko.com)**
 
 *Keep your keys safe, keep them local. 🔐*
