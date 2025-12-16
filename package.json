@@ -1,6 +1,6 @@
 {
   "name": "@heyamiko/amikonet-signer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Local DID signer for AmikoNet - manages private keys and creates cryptographic signatures (never transmits keys)",
   "type": "module",
   "main": "dist/index.js",

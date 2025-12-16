@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * amikonet-signer-mcp-server
  * Local DID signer for AmikoNet
