@@ -1,9 +1,9 @@
 import { z } from 'zod'
-import { signMessage, generateNonce } from '../utils/crypto.js'
-import { signSolanaMessage, generateSolanaNonce } from '../utils/solana-crypto.js'
-import { signEvmMessage, generateEvmNonce } from '../utils/evm-crypto.js'
-import { detectDidProvider, getCredentialsFromEnv, type DidProvider } from '../utils/did-helpers.js'
-import { getMcpContext } from './get-mcp-context.js'
+import { signMessage, generateNonce } from '../utils/crypto'
+import { signSolanaMessage } from '../utils/solana-crypto'
+import { signEvmMessage } from '../utils/evm-crypto'
+import { detectDidProvider, getCredentialsFromEnv, type DidProvider } from '../utils/did-helpers'
+import { getMcpContext } from './get-mcp-context'
 
 export interface ToolDefinition {
     name: string
@@ -26,66 +26,38 @@ export function getMcpTools(): ToolDefinition[] {
             config: {
                 title: 'Create DID Signature',
                 description:
-                    'Sign a message with your DID private key. Returns a signature that can be sent to the AmikoNet MCP server for authentication. Private keys never leave this tool.',
+                    'Sign a message with your DID private key using credentials from environment variables. Returns a signature that can be sent to the AmikoNet MCP server for authentication. Private keys never leave this tool.',
                 inputSchema: {
                     message: z.string().describe('Message to sign (typically an authentication challenge)'),
-                    did: z
-                        .string()
-                        .optional()
-                        .describe(
-                            'DID to sign with (optional if set in environment). Supports did:key, did:pkh:solana, did:ethr, did:pkh:eip155',
-                        ),
                     provider: z
                         .enum(['key', 'solana', 'evm'])
                         .optional()
-                        .describe('DID provider (optional, auto-detected from DID format)'),
+                        .describe('DID provider (optional, auto-detected from environment)'),
                 },
             },
             callback: async (args: {
                 message: string
-                did?: string
                 provider?: DidProvider
             }) => {
                 try {
+                    const { message, provider: providedProvider } = args
 
-                    const { message, did: providedDid, provider: providedProvider } = args
+                    const envCreds = getCredentialsFromEnv(providedProvider)
 
-                    let provider = providedProvider
-                    let did = providedDid
-
-                    const envCreds = getCredentialsFromEnv(provider)
-
-                    let privateKey = envCreds?.privateKey
-
-                    if (!did || !privateKey) {
-                        if (!envCreds) {
-                            throw new Error('No DID or private key provided, and none found in environment variables')
-                        }
-                        did = did || envCreds.did
-                        provider = provider || envCreds.provider
+                    if (!envCreds) {
+                        throw new Error('No credentials found in environment variables. Please set AGENT_DID and AGENT_PRIVATE_KEY (or provider-specific variants).')
                     }
 
-                    if (!provider) {
-                        provider = detectDidProvider(did!)
-                    }
-
-                    let nonce: string
-                    if (provider === 'solana') {
-                        nonce = generateSolanaNonce()
-                    } else if (provider === 'evm') {
-                        nonce = generateEvmNonce()
-                    } else {
-                        nonce = generateNonce()
-                    }
+                    const { did, privateKey, provider } = envCreds
 
                     let signature: string
 
                     if (provider === 'solana') {
-                        signature = signSolanaMessage(message, privateKey!)
+                        signature = signSolanaMessage(message, privateKey)
                     } else if (provider === 'evm') {
-                        signature = signEvmMessage(message, privateKey!)
+                        signature = signEvmMessage(message, privateKey)
                     } else {
-                        signature = await signMessage(message, privateKey!)
+                        signature = await signMessage(message, privateKey)
                     }
 
                     return {
@@ -97,7 +69,6 @@ export function getMcpTools(): ToolDefinition[] {
                                         success: true,
                                         did,
                                         message,
-                                        nonce,
                                         signature,
                                         provider,
                                     },
@@ -118,50 +89,28 @@ export function getMcpTools(): ToolDefinition[] {
             config: {
                 title: 'Generate Auth Payload',
                 description:
-                    'Generate a complete authentication payload with signature. This is a convenience tool that combines message generation and signing. Returns { did, timestamp, nonce, signature } ready to send to amikonet_authenticate.',
+                    'Generate a complete authentication payload with signature using credentials from environment variables. Returns { did, timestamp, nonce, signature } ready to send to amikonet_authenticate.',
                 inputSchema: {
-                    did: z.string().optional().describe('DID to authenticate with (optional if set in environment)'),
                     provider: z
                         .enum(['key', 'solana', 'evm'])
                         .optional()
-                        .describe('DID provider (optional, auto-detected)'),
+                        .describe('DID provider (optional, auto-detected from environment)'),
                 },
             },
-            callback: async (args: { did?: string; provider?: DidProvider }) => {
+            callback: async (args: { provider?: DidProvider }) => {
                 try {
+                    const { provider: providedProvider } = args
 
-                    const { did: providedDid, provider: providedProvider } = args
-
-                    let provider = providedProvider
-                    let did = providedDid
-
-                    const envCreds = getCredentialsFromEnv(provider)
-
-                    let privateKey = envCreds?.privateKey
-
-                    if (!did || !privateKey) {
-                        const envCreds = getCredentialsFromEnv(provider)
-                        if (!envCreds) {
-                            throw new Error('No DID or private key provided, and none found in environment variables')
-                        }
-                        did = did || envCreds.did
-                        provider = provider || envCreds.provider
+                    const envCreds = getCredentialsFromEnv(providedProvider)
+                    
+                    if (!envCreds) {
+                        throw new Error('No credentials found in environment variables. Please set AGENT_DID and AGENT_PRIVATE_KEY (or provider-specific variants).')
                     }
 
-                    if (!provider) {
-                        provider = detectDidProvider(did!)
-                    }
+                    const { did, privateKey, provider } = envCreds
 
                     const timestamp = Date.now()
-                    let nonce: string
-
-                    if (provider === 'solana') {
-                        nonce = generateSolanaNonce()
-                    } else if (provider === 'evm') {
-                        nonce = generateEvmNonce()
-                    } else {
-                        nonce = generateNonce()
-                    }
+                    const nonce = generateNonce()
 
                     const message = `${did}:${timestamp}:${nonce}`
 

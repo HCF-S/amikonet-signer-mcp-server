@@ -15,9 +15,9 @@
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
 import dotenv from 'dotenv';
-import { getCredentialsFromEnv } from './utils/did-helpers.js';
-import { getMcpServer } from './lib/get-mcp-server.js';
-import { getMcpContext } from './lib/get-mcp-context.js';
+import { getCredentialsFromEnv } from './utils/did-helpers';
+import { getMcpServer } from './lib/get-mcp-server';
+import { getMcpContext } from './lib/get-mcp-context';
 
 dotenv.config();
 

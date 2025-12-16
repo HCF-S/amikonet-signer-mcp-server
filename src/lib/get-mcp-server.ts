@@ -1,7 +1,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { getMcpTools } from './get-mcp-tools.js'
-import { getMcpContext } from './get-mcp-context.js'
-import { getMcpConfig } from './get-mcp-config.js'
+import { getMcpTools } from './get-mcp-tools'
+import { getMcpContext } from './get-mcp-context'
+import { getMcpConfig } from './get-mcp-config'
 
 const mcpConfig = getMcpConfig()
 const context = await getMcpContext()

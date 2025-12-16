@@ -153,14 +153,6 @@ export function isValidSolanaAddress(address: string): boolean {
   }
 }
 
-/**
- * Generate a random nonce for Solana authentication
- * @returns Base58-encoded random nonce
- */
-export function generateSolanaNonce(): string {
-  const bytes = nacl.randomBytes(32);
-  return bs58.encode(bytes);
-}
 
 /**
  * Extract public key bytes from Solana keypair

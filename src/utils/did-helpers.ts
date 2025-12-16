@@ -1,11 +1,11 @@
 import {
   isValidSolanaAddress,
   isValidSolanaDid,
-} from './solana-crypto.js'
+} from './solana-crypto'
 import {
   isValidEvmAddress,
   isValidEvmDid,
-} from './evm-crypto.js'
+} from './evm-crypto'
 
 export type DidProvider = 'key' | 'solana' | 'evm'
 

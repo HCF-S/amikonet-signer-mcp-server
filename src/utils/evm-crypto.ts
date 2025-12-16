@@ -211,15 +211,6 @@ export function isValidEvmAddress(address: string): boolean {
   }
 }
 
-/**
- * Generate a random nonce for EVM authentication
- * @returns Base64-encoded random nonce
- */
-export function generateEvmNonce(): string {
-  const bytes = new Uint8Array(32);
-  webcrypto.getRandomValues(bytes);
-  return Buffer.from(bytes).toString('base64');
-}
 
 /**
  * Generate a new EVM wallet (for testing/development)
