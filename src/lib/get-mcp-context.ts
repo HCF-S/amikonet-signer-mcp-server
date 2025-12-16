@@ -1,5 +1,5 @@
-import { log } from "./get-mcp-logger.js"
-import type { McpLogger } from "./get-mcp-logger.js"
+import { log } from "./get-mcp-logger"
+import type { McpLogger } from "./get-mcp-logger"
 
 export interface ApiContext {
     log: McpLogger
