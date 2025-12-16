@@ -1,5 +1,5 @@
 {
-  "name": "amikonet-signer-mcp-server",
+  "name": "@heyamiko/amikonet-signer",
   "version": "1.0.0",
   "description": "Local DID signer for AmikoNet - manages private keys and creates cryptographic signatures (never transmits keys)",
   "type": "module",
@@ -29,7 +29,8 @@
     "ed25519",
     "solana",
     "ethereum",
-    "evm"
+    "evm",
+    "aiagent"
   ],
   "author": "HeyAmiko",
   "license": "MIT",

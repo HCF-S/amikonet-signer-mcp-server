@@ -16,7 +16,7 @@ export function getMcpConfig(): McpConfig {
     }
 
     config = McpConfigSchema.parse({
-        name: process.env.NAME ?? '@heyamiko/signer',
+        name: process.env.NAME ?? '@heyamiko/amikonet-signer',
         version: process.env.VERSION ?? '1.0.0',
     })
     return config
