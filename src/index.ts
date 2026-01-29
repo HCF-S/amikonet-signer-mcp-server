@@ -19,6 +19,18 @@ import dotenv from 'dotenv';
 import { getCredentialsFromEnv } from './utils/did-helpers';
 import { getMcpServer } from './lib/get-mcp-server';
 import { getMcpContext } from './lib/get-mcp-context';
+import { formatDidEnv, generateDidKeyPair } from './utils/did-generator';
+
+const args = process.argv.slice(2);
+if (args[0] === 'generate') {
+  const pair = await generateDidKeyPair();
+  process.stdout.write(formatDidEnv(pair));
+  console.error('✅ Generated DID keypair');
+  console.error(`   DID: ${pair.did}`);
+  console.error(`   Public Key (hex): ${pair.publicKeyHex}`);
+  console.error('   Private key was printed to stdout as AGENT_PRIVATE_KEY.');
+  process.exit(0);
+}
 
 dotenv.config();
 

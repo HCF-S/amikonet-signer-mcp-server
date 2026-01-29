@@ -63,7 +63,23 @@ pnpm install
 
 ## 🚀 Quick Start
 
-### 1. Set Up Environment Variables
+### 1. Generate a DID + Private Key (optional)
+
+Generate a fresh Ed25519 `did:key` pair:
+
+```bash
+npx -y @heyamiko/amikonet-signer generate
+```
+
+Append to your `.env` file:
+
+```bash
+npx -y @heyamiko/amikonet-signer generate >> .env
+```
+
+**Note:** The `generate` command writes only `AGENT_DID` and `AGENT_PRIVATE_KEY` to stdout, so redirecting to `.env` is safe. Status details are printed to stderr.
+
+### 2. Set Up Environment Variables
 
 Create a `.env` file in the project root:
 
@@ -83,13 +99,13 @@ AGENT_EVM_PRIVATE_KEY=your-ethereum-private-key-hex
 
 **Note:** You can use generic `AGENT_DID` and `AGENT_PRIVATE_KEY` - the provider will be auto-detected.
 
-### 2. Build the Project
+### 3. Build the Project
 
 ```bash
 pnpm build
 ```
 
-### 3. Configure MCP Client
+### 4. Configure MCP Client
 
 Add both the AmikoNet MCP server and the Signer to your MCP client configuration (e.g., Claude Desktop's `claude_desktop_config.json`):
 
@@ -114,7 +130,7 @@ Add both the AmikoNet MCP server and the Signer to your MCP client configuration
 
 **Note:** The AmikoNet MCP server must be running separately (see [AmikoNet MCP documentation](https://github.com/HCF-S/AmikoNet/tree/main/mcp-server)). The signer connects via stdio and works alongside the main AmikoNet server.
 
-### 4. Start Development Server (Optional)
+### 5. Start Development Server (Optional)
 
 For local development with auto-reload:
 
