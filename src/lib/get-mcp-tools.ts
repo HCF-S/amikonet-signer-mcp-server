@@ -4,6 +4,9 @@ import { signSolanaMessage } from '../utils/solana-crypto'
 import { signEvmMessage } from '../utils/evm-crypto'
 import { detectDidProvider, getCredentialsFromEnv, type DidProvider } from '../utils/did-helpers'
 import { getMcpContext } from './get-mcp-context'
+import { exact } from '@heyamiko/x402/schemes'
+import { createKeyPairSignerFromBytes } from '@solana/kit'
+import bs58 from 'bs58'
 
 export interface ToolDefinition {
     name: string
@@ -147,6 +150,111 @@ export function getMcpTools(): ToolDefinition[] {
                 } catch (err) {
                     context.log.error('Error in generate_auth_payload tool', err)
                     throw err
+                }
+            }
+        },
+        {
+            name: 'create_x402_payment',
+            config: {
+                title: 'Create x402 Payment',
+                description:
+                    'Create a signed x402 payment header for purchasing items. Takes payment requirements from a 402 response and returns a signed X-PAYMENT header.',
+                inputSchema: {
+                    paymentRequirements: z.object({
+                        scheme: z.string(),
+                        network: z.string(),
+                        maxAmountRequired: z.string(),
+                        payTo: z.string(),
+                        asset: z.string(),
+                        resource: z.string(),
+                        description: z.string().optional(),
+                        mimeType: z.string().optional(),
+                        maxTimeoutSeconds: z.number().optional(),
+                        extra: z.record(z.any()).optional(),
+                    }).describe('Payment requirements from 402 response'),
+                    svmRpcUrl: z.string().optional().describe('Custom Solana RPC URL'),
+                },
+            },
+            callback: async (args: {
+                paymentRequirements: {
+                    scheme: string
+                    network: string
+                    maxAmountRequired: string
+                    payTo: string
+                    asset: string
+                    resource: string
+                    description?: string
+                    mimeType?: string
+                    maxTimeoutSeconds?: number
+                    extra?: Record<string, any>
+                }
+                svmRpcUrl?: string
+            }) => {
+                try {
+                    const { paymentRequirements, svmRpcUrl } = args
+                    
+                    // Get Solana credentials
+                    const envCreds = getCredentialsFromEnv('solana')
+                    
+                    if (!envCreds || envCreds.provider !== 'solana') {
+                        throw new Error('Solana credentials required for x402 payments. Set AGENT_DID and AGENT_PRIVATE_KEY for a Solana wallet.')
+                    }
+                    
+                    const { privateKey } = envCreds
+                    
+                    // Decode the base58 private key to bytes
+                    const privateKeyBytes = bs58.decode(privateKey!)
+                    
+                    // Create a Solana signer from the private key
+                    const signer = await createKeyPairSignerFromBytes(privateKeyBytes)
+                    
+                    context.log.info(`Creating x402 payment for network: ${paymentRequirements.network}`)
+                    context.log.info(`Amount: ${paymentRequirements.maxAmountRequired} to ${paymentRequirements.payTo}`)
+                    
+                    // Create the payment header using x402
+                    const paymentHeader = await exact.svm.createPaymentHeader(
+                        signer,
+                        1, // x402Version
+                        paymentRequirements as any,
+                        svmRpcUrl ? { svmConfig: { rpcUrl: svmRpcUrl } } : undefined
+                    )
+                    
+                    return {
+                        content: [
+                            {
+                                type: 'text',
+                                text: JSON.stringify(
+                                    {
+                                        success: true,
+                                        paymentHeader,
+                                        network: paymentRequirements.network,
+                                        amount: paymentRequirements.maxAmountRequired,
+                                        payTo: paymentRequirements.payTo,
+                                        message: 'Payment header created. Include as X-PAYMENT header in your request.',
+                                    },
+                                    null,
+                                    2,
+                                ),
+                            },
+                        ],
+                    }
+                } catch (err) {
+                    context.log.error('Error in create_x402_payment tool', err)
+                    return {
+                        content: [
+                            {
+                                type: 'text',
+                                text: JSON.stringify(
+                                    {
+                                        success: false,
+                                        error: err instanceof Error ? err.message : String(err),
+                                    },
+                                    null,
+                                    2,
+                                ),
+                            },
+                        ],
+                    }
                 }
             }
         },

@@ -63,6 +63,7 @@ async function main() {
   context.log.info('📋 Available tools:');
   context.log.info('   - create_did_signature: Sign messages with your DID');
   context.log.info('   - generate_auth_payload: Generate complete auth payload for AmikoNet');
+  context.log.info('   - create_x402_payment: Create signed x402 payment headers for purchases');
   context.log.info('🔒 Private keys are secure - only signatures will be returned');
   context.log.info('🔐 Security: All signing happens locally, keys never leave this process\n');
 }

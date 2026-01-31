@@ -44,11 +44,13 @@
     "url": "https://github.com/HCF-S/amikonet-signer-mcp-server/issues"
   },
   "dependencies": {
+    "@heyamiko/x402": "^1.0.1",
     "@modelcontextprotocol/sdk": "^1.24.2",
     "@noble/ed25519": "^3.0.0",
     "@noble/hashes": "^2.0.1",
     "@noble/secp256k1": "^2.2.0",
     "@solana/keys": "^5.0.0",
+    "@solana/kit": "^5.5.1",
     "bs58": "^6.0.0",
     "dotenv": "^16.4.7",
     "ethers": "^6.16.0",
